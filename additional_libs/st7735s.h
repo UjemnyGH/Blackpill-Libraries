@@ -212,11 +212,8 @@ void ST_Begin(ST7735S_SW* st, uint8 rstPin, uint8 chipEnPin, uint8 datComPin, ui
     setPinModeGPIO(st->resetIO, st->resetPin, MODE_OUTPUT);
     setPinModeGPIO(st->dataCommandIO, st->dataCommandPin, MODE_OUTPUT);
     setPinModeGPIO(st->backlightIO, st->backlightPin, MODE_OUTPUT);
-    /*setPullGPIO(st->backlightIO, st->backlightPin, GPIO_PULL_DOWN);
-    setPullGPIO(st->dataCommandIO, st->dataCommandPin, GPIO_PULL_DOWN);
-    setPullGPIO(st->resetIO, st->resetPin, GPIO_PULL_UP);*/
 
-    st->spiTx.frequency = 40000000;
+    st->spiTx.frequency = 100;
     st->spiTx.chipSelectPin = chipEnPin;
     st->spiTx.clockPin = clkPin;
     st->spiTx.masterOutPin = dataPin;
@@ -230,26 +227,26 @@ void ST_Begin(ST7735S_SW* st, uint8 rstPin, uint8 chipEnPin, uint8 datComPin, ui
     
     SPI_SW_TX_Begin(&st->spiTx);
 
-    // setOutputGPIO(st->resetIO, st->resetPin, HIGH);
+    setOutputGPIO(st->resetIO, st->resetPin, HIGH);
     ST_SerialBusEnable(st);
-    // ST_Command(st);
-    // setOutputGPIO(st->resetIO, st->resetPin, LOW);
-    // delay(40);
+    ST_Command(st);
+    setOutputGPIO(st->resetIO, st->resetPin, LOW);
+    delay(40);
     setOutputGPIO(st->resetIO, st->resetPin, HIGH);
     delay(4000);
-    ST_SerialBusDisable(st);
+    // ST_SerialBusDisable(st);
 
     st->pixelFormat = INTERFACE_PIXEL_FORMAT_16BIT;
 
-    ST_SerialBusEnable(st);
+    // ST_SerialBusEnable(st);
     ST_Command(st);
     ST_Send(st, DISPLAY_SOFTWARE_RESET);
-    ST_SerialBusDisable(st);
+    // ST_SerialBusDisable(st);
     delay(6000);
 
-    ST_SerialBusEnable(st);
+    // ST_SerialBusEnable(st);
     ST_Send(st, DISPLAY_SLEEP_OUT_BOOSTER_ON);
-    ST_SerialBusDisable(st);
+    // ST_SerialBusDisable(st);
     delay(2000);
 
     // ST_SerialBusEnable(st);
@@ -266,7 +263,7 @@ void ST_Begin(ST7735S_SW* st, uint8 rstPin, uint8 chipEnPin, uint8 datComPin, ui
     // ST_SerialBusDisable(st);
     // delay(40);
 
-    ST_SerialBusEnable(st);
+    // ST_SerialBusEnable(st);
     ST_Command(st);
     ST_Send(st, DISPLAY_ON);
     ST_SerialBusDisable(st);
