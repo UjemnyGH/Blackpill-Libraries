@@ -202,7 +202,21 @@ void PCD_LoadBitmap(PCD8544_Software* pcd, uint8 x, uint8 y, uint8* bitmap, uint
             uint8 image_byte = bitmap[_y * ((width / 8) == 0 ? 1 : (width / 8)) + _x];
 
             for(int i = 0; i < 8; i++) {
-                PCD_SetPixel(pcd, x + _x + i, y + _y, !(!(image_byte & (1 << i))));
+                PCD_SetPixel(pcd, x + _x * 8 + i, y + _y, !(!(image_byte & (1 << i))));
+            }
+        }
+    }
+}
+
+void PCD_LoadBitmapHorizontal(PCD8544_Software* pcd, uint8 x, uint8 y, uint8* bitmap, uint8 width, uint8 height) {
+    if(x > PCD_LCD_WIDTH || y > PCD_LCD_HEIGHT) return;
+
+    for(uint8 _x = 0; _x < ((width / 8) == 0 ? 1 : (width / 8)); _x++) {
+        for(uint8 _y = 0; _y < height; _y++) {
+            uint8 image_byte = bitmap[_y * ((width / 8) == 0 ? 1 : (width / 8)) + _x];
+
+            for(int i = 0; i < 8; i++) {
+                PCD_SetPixel(pcd, x + _x * 8 + i, y + _y, !(!(image_byte & (1 << i))));
             }
         }
     }
@@ -527,12 +541,35 @@ void PCD_DrawText(PCD8544_Software *pcd, const char* text, uint8 x, uint8 y) {
             to_start = -2;
         }
 
+        if(text[i] == 0) {
+            break;
+        }
+
         for(uint8 my = 0; my < 6; my++) {
             for(uint8 mx = 0; mx < 8; mx++) {
                 if(text[i] != 10) {
                     PCD_SetPixel(pcd, x + mx + ((i * 6) - to_start), y + (my + next_line), gFont[ToUpper(text[i])][my] & (0x1 << mx));
                 }
             }
+        }
+    }
+}
+
+void PCD_DrawCircle(PCD8544_Software *pcd, uint8 x, uint8 y, uint8 r) {
+    uint16 _x = r, _y = 0, d = 0;
+    
+    while(_x >= _y) {
+        PCD_SetPixel(pcd, x + _x, y + _y, HIGH);
+        PCD_SetPixel(pcd, x - _x, y - _y, HIGH);
+        PCD_SetPixel(pcd, x + _x, y - _y, HIGH);
+        PCD_SetPixel(pcd, x - _x, y + _y, HIGH);
+
+        d += 2 * _y + 1;
+        _y++;
+
+        if(d >= 0) {
+            d += -2 * _x + 1;
+            x--;
         }
     }
 }

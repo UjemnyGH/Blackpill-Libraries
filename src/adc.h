@@ -31,7 +31,7 @@ struct ADC {
 
 #define AnalogToDigital ((struct ADC *)ADC1_BASE)
 
-#define ADC_CommonControlRegister (*(ion32*)ADC1_BASE + 0x304)
+#define ADC_CommonControlRegister (*(io32*)ADC1_BASE + 0x304)
 
 #define ADC_COMMON_CONTROL_PRESCALER_2  0x0
 #define ADC_COMMON_CONTROL_PRESCALER_4  0x10000

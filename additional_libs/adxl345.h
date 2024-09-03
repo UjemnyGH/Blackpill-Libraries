@@ -110,14 +110,17 @@ typedef struct ADXL345 {
 } ADXL345;
 
 void ADXL_Begin(ADXL345* adxl, uint8 csp, uint8 int1p, uint8 int2p, uint8 sdop, uint8 sdap, uint8 sclkp, struct GeneralPurposeIO *csio, struct GeneralPurposeIO *int1io, struct GeneralPurposeIO *int2io, struct GeneralPurposeIO *sdoio, struct GeneralPurposeIO *sdaio, struct GeneralPurposeIO *sclkio) {
-    adxl->mInterrupt1IO = int1io;
-    adxl->mInterrupt2IO = int2io;
-
-    adxl->mInterrupt1Pin = int1p;
-    adxl->mInterrupt2Pin = int2p;
-
-    setPinModeGPIO(adxl->mInterrupt1IO, adxl->mInterrupt1Pin, MODE_OUTPUT);
-    setPinModeGPIO(adxl->mInterrupt2IO, adxl->mInterrupt2Pin, MODE_OUTPUT);
+    if(int1p < 16) {
+        adxl->mInterrupt1IO = int1io;
+        adxl->mInterrupt1Pin = int1p;
+        setPinModeGPIO(adxl->mInterrupt1IO, adxl->mInterrupt1Pin, MODE_OUTPUT);
+    }
+    
+    if(int2p < 16) {
+        adxl->mInterrupt2IO = int2io;
+        adxl->mInterrupt2Pin = int2p;
+        setPinModeGPIO(adxl->mInterrupt2IO, adxl->mInterrupt2Pin, MODE_OUTPUT);
+    }
 
     adxl->mSpi.frequency = 3200;
     adxl->mSpi.chipSelectPin = csp;
@@ -156,6 +159,10 @@ uint8 ADXL_ReadData(ADXL345* adxl, uint8 address) {
     SPI_SW_TX_EndTransaction(&adxl->mSpi);
 
     return result;
+}
+
+void ADXL_WakeUp(ADXL345* adxl) {
+    ADXL_WriteData(adxl, ADXL_POWER_CTL, S_ADXL_POWER_CTRL_WAKEUP_8Hz);
 }
 
 void ADXL_Measure(ADXL345* adxl) {

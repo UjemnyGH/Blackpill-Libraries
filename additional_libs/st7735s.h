@@ -166,11 +166,11 @@ void ST_SerialBusDisable(ST7735S_SW* st) {
 }
 
 void ST_Command(ST7735S_SW* st) {
-    setPinModeGPIO(st->dataCommandIO, st->dataCommandPin, LOW);
+    setOutputGPIO(st->dataCommandIO, st->dataCommandPin, LOW);
 }
 
 void ST_Data(ST7735S_SW* st) {
-    setPinModeGPIO(st->dataCommandIO, st->dataCommandPin, HIGH);
+    setOutputGPIO(st->dataCommandIO, st->dataCommandPin, HIGH);
 }
 
 void ST_TransmitCD(ST7735S_SW* st, uint8* data, uint16 len) {
@@ -249,22 +249,23 @@ void ST_Begin(ST7735S_SW* st, uint8 rstPin, uint8 chipEnPin, uint8 datComPin, ui
 
     ST_SerialBusEnable(st);
     ST_Send(st, DISPLAY_SLEEP_OUT_BOOSTER_ON);
+    ST_Send(st, 0x0);
     ST_SerialBusDisable(st);
     delay(2000);
 
-    // ST_SerialBusEnable(st);
-    // ST_Send(st, DISPLAY_MEMORY_DATA_ACCESS_CONTROL);
-    // ST_Data(st);
-    // ST_Send(st, MEMORY_DATA_COL_ORDER | MEMORY_DATA_ROW_ORDER);
-    // ST_SerialBusDisable(st);
+    ST_SerialBusEnable(st);
+    ST_Send(st, DISPLAY_MEMORY_DATA_ACCESS_CONTROL);
+    ST_Data(st);
+    ST_Send(st, MEMORY_DATA_COL_ORDER | MEMORY_DATA_ROW_ORDER);
+    ST_SerialBusDisable(st);
 
-    // ST_SerialBusEnable(st);
-    // ST_Command(st);
-    // ST_Send(st, DISPLAY_INTERFACE_PIXEL_FORMAT);
-    // ST_Data(st);
-    // ST_Send(st, st->pixelFormat);
-    // ST_SerialBusDisable(st);
-    // delay(40);
+    ST_SerialBusEnable(st);
+    ST_Command(st);
+    ST_Send(st, DISPLAY_INTERFACE_PIXEL_FORMAT);
+    ST_Data(st);
+    ST_Send(st, st->pixelFormat);
+    ST_SerialBusDisable(st);
+    delay(40);
 
     ST_SerialBusEnable(st);
     ST_Command(st);

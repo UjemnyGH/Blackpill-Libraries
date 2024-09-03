@@ -80,6 +80,18 @@ struct SPI {
  */
 #define SPI1 ((struct SPI *)SPI1_BASE)
 
+/**
+ * @brief Write data to SPI
+ * 
+ */
+#define WriteDataSPI(spi, value) spi->data = value
+
+/**
+ * @brief Read data from SPI
+ * 
+ */
+#define ReadDataSPI(spi) spi->data
+
 #define SPI_CONTROL1_BIDIRECTIONAL_MODE  0x8000
 #define SPI_CONTROL1_OUTPUT_EN_BIDIR     0x4000
 #define SPI_CONTROL1_HARDWARE_CRC_CALC   0x2000
